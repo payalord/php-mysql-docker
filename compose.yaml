@@ -1,0 +1,28 @@
+services:
+    app-php:
+        container_name: php
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./src:/var/www/html
+        build: .
+        command: php -S app-php:3000 -t /var/www/html/public
+        restart: always
+        depends_on:
+            - app-mysql
+    app-mysql:
+        container_name: mysql
+        image: mysql:8.3.0
+        restart: always
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+        command: mysqld --default-authentication-plugin=caching_sha2_password
+        ports:
+            - "3306:3306"
+        volumes:
+            - mysql-data:/var/lib/mysql:rw
+volumes:
+    mysql-data:
